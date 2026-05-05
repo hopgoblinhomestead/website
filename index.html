@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hop Goblin Homestead</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: #f5f0e8;
+  color: #2d2a26;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+/* Kraft texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(139,119,90,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(87,107,68,0.03) 0%, transparent 50%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.008) 2px, rgba(0,0,0,0.008) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrapper { position: relative; z-index: 1; }
+
+/* Navigation */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #3a3530;
+  border-bottom: 3px dashed #6b8f4a;
+  padding: 0.6rem 1rem;
+}
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem 1.2rem;
+}
+nav a {
+  color: #e8dfc9;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+nav a:hover { background: rgba(107,143,74,0.3); }
+
+/* Headings */
+h1, h2, h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: normal;
+}
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: #2d2a26; }
+h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: #2d2a26;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-bottom: 1.2rem;
+}
+h2::after {
+  content: '~ ✦ ~';
+  display: block;
+  font-size: 0.9rem;
+  color: #6b8f4a;
+  margin-top: 0.6rem;
+  letter-spacing: 6px;
+  font-weight: normal;
+}
+h2::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #6b8f4a, transparent);
+}
+
+/* Sections */
+section {
+  padding: 3rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.section-alt {
+  background: #eae4d8;
+  max-width: 100%;
+  border-top: 2px dashed #c4b99a;
+  border-bottom: 2px dashed #c4b99a;
+}
+.section-alt .inner { max-width: 1100px; margin: 0 auto; }
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+  position: relative;
+}
+.hero-title {
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.hero-tagline {
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: #5a6b45;
+  margin-bottom: 0.8rem;
+}
+.hero-supporting {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.85rem;
+  color: #6b6052;
+  max-width: 550px;
+  margin: 0 auto 1.5rem;
+}
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.5rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin: 0.3rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.btn-primary { background: #6b8f4a; color: #fff; }
+.btn-secondary { background: transparent; color: #3a3530; border: 2px dashed #6b8f4a; }
+
+/* Market Shelf Scene */
+
+/* Step Cards */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+.step-card {
+  background: #faf7f0;
+  border: 2px dashed #c4b99a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 3px 3px 0 #d9cfbf;
+}
+.step-num {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #6b8f4a;
+  color: #fff;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.step-card h3 {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #3a3530;
+}
+.step-card p {
+  font-size: 0.85rem;
+  color: #6b6052;
+  font-family: 'Courier New', monospace;
+}
+
+/* FAQ */
+.faq-list { max-width: 700px; margin: 0 auto; }
+.faq-item {
+  background: #faf7f0;
+  border: 1px solid #c4b99a;
+  border-left: 4px solid #6b8f4a;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 #e0d8c8;
+}
+.faq-q {
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-q::after { content: '+'; font-size: 1.2rem; color: #6b8f4a; transition: transform 0.2s; }
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+.faq-a {
+  padding: 0 1.2rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  color: #6b6052;
+}
+.faq-item.open .faq-a { max-height: 200px; padding: 0 1.2rem 1rem; }
+
+/* Product Cards */
+.products { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; }
+.product-card {
+  background: #3a3530;
+  color: #e8dfc9;
+  border-radius: 8px;
+  padding: 1.3rem;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.product-card::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px; right: 8px; bottom: 8px;
+  border: 1px dashed rgba(107,143,74,0.4);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.product-icon {
+  font-size: 1.5rem;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.product-card h3 {
+  font-size: 1rem;
+  color: #b8d4a0;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.product-card p {
+  font-size: 0.8rem;
+  font-family: 'Courier New', monospace;
+  line-height: 1.6;
+  opacity: 1;
+  color: #e8dfc9;
+  margin-bottom: 0.8rem;
+}
+.product-detail {
+  font-size: 0.7rem;
+  font-family: 'Courier New', monospace;
+  color: #8ba97f;
+  border-top: 1px dashed rgba(139,175,106,0.3);
+  padding-top: 0.6rem;
+  margin-top: 0.6rem;
+}
+.detail-label {
+  color: #a0b88a;
+  font-weight: bold;
+}
+
+/* About */
+.about-box {
+  background: #faf7f0;
+  border: 2px solid #c4b99a;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 4px 4px 0 #d9cfbf;
+  position: relative;
+}
+.about-box::before {
+  content: '🌿';
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  font-size: 1.2rem;
+}
+.about-box p {
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  color: #4a4540;
+}
+
+/* Find Me / Contact */
+.find-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.info-card {
+  background: #faf7f0;
+  border: 2px dashed #c4b99a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 2px 2px 0 #d9cfbf;
+}
+.info-card h3 { font-size: 1.1rem; color: #5a6b45; margin-bottom: 0.8rem; }
+.info-card p, .info-card li {
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  color: #6b6052;
+  margin-bottom: 0.4rem;
+}
+.info-card ul { list-style: none; padding: 0; }
+.info-card li::before { content: '· '; color: #6b8f4a; }
+
+/* Footer */
+footer {
+  background: #3a3530;
+  color: #a09888;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  border-top: 3px dashed #6b8f4a;
+}
+footer span { color: #6b8f4a; }
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 0.5rem 0;
+  color: #c4b99a;
+  letter-spacing: 6px;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 600px) {
+  section { padding: 2rem 1rem; }
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="wrapper">
+   <nav>
+    <ul>
+     <li><a href="#how-it-works">How It Works</a></li>
+     <li><a href="#faq">FAQ</a></li>
+     <li><a href="#products">Product Info</a></li>
+     <li><a href="#about">About</a></li>
+     <li><a href="#find">Find Me</a></li>
+     <li><a href="#contact">Contact</a></li>
+    </ul>
+   </nav>
+   <header class="hero" style="background: linear-gradient(135deg, #eae4d8 0%, #f5f0e8 50%, #eae4d8 100%); border-bottom: 3px dashed #6b8f4a; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -20px; right: -20px; font-size: 120px; opacity: 0.08; z-index: 0;">
+     🌿
+    </div>
+    <div style="position: absolute; bottom: -30px; left: -30px; font-size: 140px; opacity: 0.06; z-index: 0;">
+     🏡
+    </div>
+    <div style="position: relative; z-index: 1;">
+     <div style="font-size: 3.5rem; margin-bottom: 1.2rem; color: #6b8f4a;">
+      🧺✦🌿
+     </div>
+     <h1 class="hero-title" id="heroTitle" style="letter-spacing: 3px; text-transform: uppercase; font-size: clamp(2.2rem, 6vw, 3.5rem); margin-bottom: 0.8rem;">Hop Goblin Homestead</h1>
+     <p class="hero-tagline" id="heroTagline" style="font-style: italic; font-size: clamp(1.1rem, 2.5vw, 1.4rem); color: #5a6b45; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Small-batch goods, garden-grown magic, and practical homestead shenanigans.</p>
+     <p class="hero-supporting" id="heroSupporting" style="font-size: 0.9rem; color: #6b6052; max-width: 580px; margin: 0 auto 2rem; line-height: 1.8;">Refills, useful little goods, garden experiments, and low-waste swaps from a curious local homestead.</p>
+     <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="#products" class="btn btn-primary">See What's Available</a> <a href="#how-it-works" class="btn btn-secondary">How It Works</a>
+     </div>
+    </div>
+   </header>
+   <div class="divider">
+    · · · ✦ · · ·
+   </div>
+   <section id="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+     <div class="step-card">
+      <div class="step-num">
+       1
+      </div>
+      <h3>Bring a container or grab a jar</h3>
+      <p>Reuse what you have or pick up a simple container at the table. No pressure either way.</p>
+     </div>
+     <div class="step-card">
+      <div class="step-num">
+       2
+      </div>
+      <h3>Refill, shop, or ask questions</h3>
+      <p>Browse practical goods, refill basics, garden items, and small-batch experiments. Everything's labeled and there's always time to chat.</p>
+     </div>
+     <div class="step-card">
+      <div class="step-num">
+       3
+      </div>
+      <h3>Take home useful little goods with less waste</h3>
+      <p>Simple swaps, local goods, and a little homestead magic without the extra packaging.</p>
+     </div>
+    </div>
+   </section>
+   <div class="section-alt">
+    <section id="faq">
+     <div class="inner">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+       <div class="faq-item">
+        <div class="faq-q">
+         Do I need to bring my own container?
+        </div>
+        <div class="faq-a">
+         Nope! Bringing your own is great, but there are always jars and containers available at the table. No stress.
+        </div>
+       </div>
+       <div class="faq-item">
+        <div class="faq-q">
+         What kinds of products do you carry?
+        </div>
+        <div class="faq-a">
+         Liquid refills (soap, cleaners), mushroom and garden goods, small handmade items, brewing-inspired curiosities, herb blends, and practical low-waste swaps.
+        </div>
+       </div>
+       <div class="faq-item">
+        <div class="faq-q">
+         Are products available every week?
+        </div>
+        <div class="faq-a">
+         Most staples are consistent, but seasonal items rotate. Check the current list before you visit—it updates regularly.
+        </div>
+       </div>
+       <div class="faq-item">
+        <div class="faq-q">
+         How do refills work?
+        </div>
+        <div class="faq-a">
+         Bring or grab a container, fill what you need, and pay by weight or volume. Simple as that. Labels and instructions provided.
+        </div>
+       </div>
+       <div class="faq-item">
+        <div class="faq-q">
+         Where can I find you next?
+        </div>
+        <div class="faq-a">
+         Check the "Find Me" section below for upcoming market dates and locations. Updates posted weekly.
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </div>
+   <section id="products">
+    <h2>What's on the Table</h2>
+    <div class="products">
+     <div class="product-card">
+      <h3><span>Refill Station</span><span class="product-icon">🧼</span></h3>
+      <p>Laundry, dish, hand, and Castile-style basics priced by the ounce. Bring your bottles or grab a jar.</p>
+      <div class="product-detail"><span class="detail-label">Pricing:</span> by volume
+      </div>
+     </div>
+     <div class="product-card">
+      <h3><span>Mushrooms &amp; Garden</span><span class="product-icon">🍄</span></h3>
+      <p>Seasonal grow experiments, oyster kits, garden goods, compost starters, and plant-adjacent offerings.</p>
+      <div class="product-detail"><span class="detail-label">Seasonal:</span> varies weekly
+      </div>
+     </div>
+     <div class="product-card">
+      <h3><span>Homestead Goods</span><span class="product-icon">🏺</span></h3>
+      <p>Small useful goods, jars, handmade items, practical low-waste swaps, and curiosities from the workshop.</p>
+      <div class="product-detail"><span class="detail-label">Usually in stock</span>
+      </div>
+     </div>
+     <div class="product-card">
+      <h3><span>Brewing-Inspired Items</span><span class="product-icon">🌾</span></h3>
+      <p>Hop-forward experiments, spent-grain goods, brewing-adjacent products, and flavor collaborations.</p>
+      <div class="product-detail"><span class="detail-label">Limited edition</span>
+      </div>
+     </div>
+     <div class="product-card">
+      <h3><span>Herbs &amp; Apothecary</span><span class="product-icon">🌿</span></h3>
+      <p>Dried blends, simple tinctures, tea mixes, herbal salts, and garden-grown herbal goods.</p>
+      <div class="product-detail"><span class="detail-label">Made fresh</span>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-alt">
+    <section id="about">
+     <div class="inner">
+      <h2>About the Homestead</h2>
+      <div class="about-box">
+       <p>Hop Goblin Homestead is a small, curious operation run from a real homestead. It started with too many mushrooms, a soap experiment, and a hop vine that wouldn't quit.</p>
+       <p>Everything here is made, grown, or sourced with intention—low-waste, practical, and a little bit clever. No grand claims, just useful goods from someone who likes making things and hates throwing things away.</p>
+       <p>The goblin is mostly metaphorical. Mostly.</p>
+      </div>
+     </div>
+    </section>
+   </div>
+   <section id="find">
+    <h2>Find Me</h2>
+    <div class="find-grid">
+     <div class="info-card">
+      <h3>Upcoming Markets</h3>
+      <ul>
+       <li>Saturday Morning Market — weekly</li>
+       <li>First Friday Night Market — monthly</li>
+       <li>Seasonal pop-ups — check socials</li>
+      </ul>
+     </div>
+    </div>
+   </section>
+   <section id="contact">
+    <h2>Get in Touch</h2>
+    <div class="find-grid">
+     <div class="info-card">
+      <h3>Questions or Custom Orders?</h3>
+      <p>hello@hopgoblinhomestead.com</p>
+      <p>DM on socials anytime.</p>
+     </div>
+    </div>
+   </section>
+   <footer>
+    <p><span>⌂</span> Hop Goblin Homestead · Small-batch · Garden-grown · Low-waste</p>
+    <p style="margin-top:0.5rem;">Made with dirt, curiosity, and a little mischief.</p>
+   </footer>
+  </div>
+  <script>
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    q.parentElement.classList.toggle('open');
+  });
+});
+
+// Element SDK
+const defaultConfig = {
+  hero_title: 'Hop Goblin Homestead',
+  hero_tagline: 'Small-batch goods, garden-grown magic, and practical homestead shenanigans.',
+  hero_supporting: 'Refills, useful little goods, garden experiments, and low-waste swaps from a curious local homestead.',
+  background_color: '#f5f0e8',
+  surface_color: '#faf7f0',
+  text_color: '#2d2a26',
+  primary_color: '#6b8f4a',
+  accent_color: '#3a3530',
+  font_family: 'Georgia',
+  font_size: 16
+};
+
+function applyConfig(config) {
+  document.getElementById('heroTitle').textContent = config.hero_title || defaultConfig.hero_title;
+  document.getElementById('heroTagline').textContent = config.hero_tagline || defaultConfig.hero_tagline;
+  document.getElementById('heroSupporting').textContent = config.hero_supporting || defaultConfig.hero_supporting;
+
+  const bg = config.background_color || defaultConfig.background_color;
+  const surface = config.surface_color || defaultConfig.surface_color;
+  const text = config.text_color || defaultConfig.text_color;
+  const primary = config.primary_color || defaultConfig.primary_color;
+  const accent = config.accent_color || defaultConfig.accent_color;
+  const font = config.font_family || defaultConfig.font_family;
+  const size = config.font_size || defaultConfig.font_size;
+
+  document.body.style.background = bg;
+  document.body.style.color = text;
+  document.body.style.fontFamily = `${font}, Georgia, serif`;
+  document.body.style.fontSize = size + 'px';
+
+  document.querySelectorAll('.step-card, .about-box, .info-card').forEach(el => el.style.background = surface);
+  document.querySelectorAll('.btn-primary, .step-num').forEach(el => el.style.background = primary);
+  document.querySelectorAll('nav, .product-card, footer').forEach(el => el.style.background = accent);
+}
+
+if (window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => applyConfig(config),
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+        { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+        { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+      fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ['hero_title', config.hero_title || defaultConfig.hero_title],
+      ['hero_tagline', config.hero_tagline || defaultConfig.hero_tagline],
+      ['hero_supporting', config.hero_supporting || defaultConfig.hero_supporting]
+    ])
+  });
+}
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f730675d69e5297',t:'MTc3ODAxODUwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
